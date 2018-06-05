@@ -2,14 +2,18 @@
 
 using namespace Rcpp;
 
-// [[Rcpp::export]]
-SEXP arma_sgemm(
-    const arma::fmat A,
-    const arma::fmat B)
-{
-    arma::fmat C = A * B;
-    return wrap(C);
-}
+// #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+// 	// do nothing
+// #else
+	// [[Rcpp::export]]
+	SEXP arma_sgemm(
+	  const arma::fmat A,
+	  const arma::fmat B)
+	{
+	  arma::fmat C = A * B;
+	  return wrap(C);
+	}
+// #endif
 
 // [[Rcpp::export]]
 SEXP arma_dgemm(
@@ -45,15 +49,19 @@ Rcpp::List arma_deigen(
     return Rcpp::List::create(wrap(eigvec), wrap(eigval));
 }
     
-// [[Rcpp::export]]
-List arma_seigen(
-    const arma::fmat A)
+// #if defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+//     // do nothing
+// #else
+    // [[Rcpp::export]]
+    List arma_seigen(
+    		const arma::fmat A)
     {
-        arma::fvec eigval;
-        arma::fmat eigvec;
-        
-        arma::eig_sym(eigval, eigvec, A);
-        
-        return List::create(wrap(eigvec), wrap(eigval));
+    	arma::fvec eigval;
+    	arma::fmat eigvec;
+    	
+    	arma::eig_sym(eigval, eigvec, A);
+    	
+    	return List::create(wrap(eigvec), wrap(eigval));
     }
+// #endif
     

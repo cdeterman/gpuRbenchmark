@@ -3,14 +3,15 @@ Type: Package
 Title: What the package does (short line)
 Version: 1.0
 Date: 2015-09-04
-Author: Your Name
-Maintainer: Your Name <your@email.com>
+Author: Charles Determan Jr.
+Maintainer: Charles Determan Jr <cdetermanjr@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: GPL (>= 2)
+Depends: gpuR
 Imports: Rcpp (>= 0.11.6),
 	RcppArmadillo,
 	RcppEigen,
-	gpuR,
-	reshape2,
-	ggplot2
-LinkingTo: Rcpp, RcppArmadillo, RcppEigen
+	ggplot2,
+	microbenchmark
+LinkingTo: Rcpp, RcppArmadillo, RcppEigen, float
+RoxygenNote: 6.0.1
