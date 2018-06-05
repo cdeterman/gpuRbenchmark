@@ -108,6 +108,18 @@ vcl_gemm <- function(A){
 	invisible(ret)
 }
 
+vcl_crossprod <- function(A){
+	ret <- crossprod(A)
+	synchronize()
+	invisible(ret)
+}
+
+vcl_tcrossprod <- function(A){
+	ret <- tcrossprod(A)
+	synchronize()
+	invisible(ret)
+}
+
 
 #' @import dplyr
 #' @export
@@ -160,6 +172,117 @@ benchmark_gemm <- function(ORDER = NULL, N = 3, type = "double"){
 		ggtitle(title) + 
 		scale_y_continuous(name = "time (sec)")
 	  # scale_y_log10(name = "time (sec)")
+	
+	plot(p)
+	return(df)
+}
+
+#' @export
+benchmark_crossprod <- function(ORDER = NULL, N = 3, type = "double"){
+	
+	# ORDER <- c(10, 100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000)
+	if(is.null(ORDER)){
+		ORDER <- c(10, 100, 500, 1000)	
+	}
+	
+	benchmarks <- vector("list", length = length(ORDER))
+	names(benchmarks) <- ORDER
+	# colnames(benchmarks) <- c("expr","min", "lq", "mean", "median", "uq", "max")
+	
+	
+	
+	title <- 
+		switch(type,
+					 "double" = "crossprod Double Performance",
+					 "float" = "crossprod Single Performance",
+					 stop("Unrecongnized type")
+		)
+	
+	for(i in 1:length(ORDER)){
+		
+		A <- getMatrix(ORDER[i])
+		gpuA <- gpuMatrix(A, type = type)
+		vclA <- vclMatrix(A, type = type)
+		
+		mbm <- microbenchmark(base = crossprod(A),
+													gpu = crossprod(gpuA),
+													vcl = vcl_crossprod(vclA),
+													times = N, unit = "ms")
+		
+		benchmarks[[i]] <- mbm
+	}
+	
+	df <- bind_rows(lapply(seq_along(benchmarks), function(i) { 
+		benches <- summary(benchmarks[[i]])[,1:8]
+		benches$expr <- as.character(benches$expr)
+		cbind.data.frame(ORDER = as.character(rep(names(benchmarks)[i], 3)), benches, stringsAsFactors = FALSE) 
+	}))
+	
+	df$ORDER <- as.numeric(df$ORDER)
+	
+	# plot
+	p <- ggplot(df, aes(y = mean, x = ORDER, group = expr, colour=expr)) + 
+		geom_line() + 
+		geom_errorbar(aes(ymin = lq, ymax = uq)) +
+		ggtitle(title) + 
+		scale_y_continuous(name = "time (sec)")
+	# scale_y_log10(name = "time (sec)")
+	
+	plot(p)
+	return(df)
+}
+
+
+#' @export
+benchmark_tcrossprod <- function(ORDER = NULL, N = 3, type = "double"){
+	
+	# ORDER <- c(10, 100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000)
+	if(is.null(ORDER)){
+		ORDER <- c(10, 100, 500, 1000)	
+	}
+	
+	benchmarks <- vector("list", length = length(ORDER))
+	names(benchmarks) <- ORDER
+	# colnames(benchmarks) <- c("expr","min", "lq", "mean", "median", "uq", "max")
+	
+	
+	
+	title <- 
+		switch(type,
+					 "double" = "tcrossprod Double Performance",
+					 "float" = "tcrossprod Single Performance",
+					 stop("Unrecongnized type")
+		)
+	
+	for(i in 1:length(ORDER)){
+		
+		A <- getMatrix(ORDER[i])
+		gpuA <- gpuMatrix(A, type = type)
+		vclA <- vclMatrix(A, type = type)
+		
+		mbm <- microbenchmark(base = tcrossprod(A),
+													gpu = tcrossprod(gpuA),
+													vcl = vcl_tcrossprod(vclA),
+													times = N, unit = "ms")
+		
+		benchmarks[[i]] <- mbm
+	}
+	
+	df <- bind_rows(lapply(seq_along(benchmarks), function(i) { 
+		benches <- summary(benchmarks[[i]])[,1:8]
+		benches$expr <- as.character(benches$expr)
+		cbind.data.frame(ORDER = as.character(rep(names(benchmarks)[i], 3)), benches, stringsAsFactors = FALSE) 
+	}))
+	
+	df$ORDER <- as.numeric(df$ORDER)
+	
+	# plot
+	p <- ggplot(df, aes(y = mean, x = ORDER, group = expr, colour=expr)) + 
+		geom_line() + 
+		geom_errorbar(aes(ymin = lq, ymax = uq)) +
+		ggtitle(title) + 
+		scale_y_continuous(name = "time (sec)")
+	# scale_y_log10(name = "time (sec)")
 	
 	plot(p)
 	return(df)
