@@ -1,15 +1,12 @@
 .onLoad <- function(libname, pkgname)
 {
 	cat("called onLoad")
-	path <- "C:/Program Files/R/R-3.4.3/library/float/libs/x64"
-	Sys.setenv(PATH = paste(normalizePath(path), Sys.getenv("PATH"), sep = ";"))
-	# cat("\n")
-	# cat(Sys.getenv("PATH"))
-	# cat("\n")
+	path <- float:::ldflags()
+	Sys.setenv(PATH = paste(path, Sys.getenv("PATH"), sep = ";"))
 }
 
 .onAttach <- function(libname, pkgname)
 {
-	path <- "C:/Program Files/R/R-3.4.3/library/float/libs/x64"
-	Sys.setenv(PATH = paste(normalizePath(path), Sys.getenv("PATH"), sep = ";"))
+	path <- float:::ldflags()
+	Sys.setenv(PATH = path, Sys.getenv("PATH"), sep = ";")
 }

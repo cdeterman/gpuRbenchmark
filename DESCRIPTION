@@ -12,6 +12,7 @@ Imports: Rcpp (>= 0.11.6),
 	RcppArmadillo,
 	RcppEigen,
 	ggplot2,
-	microbenchmark
+	microbenchmark,
+	dplyr
 LinkingTo: Rcpp, RcppArmadillo, RcppEigen, float
 RoxygenNote: 6.0.1

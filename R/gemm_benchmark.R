@@ -121,7 +121,7 @@ vcl_tcrossprod <- function(A){
 }
 
 
-#' @import dplyr
+#' @importFrom dplyr bind_rows
 #' @export
 benchmark_gemm <- function(ORDER = NULL, N = 3, type = "double"){
 	
