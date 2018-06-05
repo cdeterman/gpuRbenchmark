@@ -2,10 +2,8 @@ CXX_STD = CXX11
 
 SLAPACK_LIBS = `${R_HOME}/bin${R_ARCH_BIN}/Rscript -e "float:::ldflags()"`
 
-PKG_CXXFLAGS = '-I"C:/PROGRA~1/R/R-34~1.3/library/float/include/float"'
-
 ifeq "$(WIN)" "64"
-	PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) $(BLAS_LIBS) $(LAPACK_LIBS) $(FLIBS) -L"C:/PROGRA~1/R/R-34~1.3/library/float/libs/x64" -lfloat
+	PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) $(BLAS_LIBS) $(LAPACK_LIBS) $(FLIBS) -L$(SLAPACK_LIBS) -lfloat
 else
-	PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) $(BLAS_LIBS) $(LAPACK_LIBS) $(FLIBS) -L"C:/PROGRA~1/R/R-34~1.3/library/float/libs/i386/" -lfloat
+	PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) $(BLAS_LIBS) $(LAPACK_LIBS) $(FLIBS) -L$(SLAPACK_LIBS) -lfloat
 endif
