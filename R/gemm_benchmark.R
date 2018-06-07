@@ -121,7 +121,6 @@ vcl_tcrossprod <- function(A){
 }
 
 
-#' @importFrom dplyr bind_rows
 #' @export
 benchmark_gemm <- function(ORDER = NULL, N = 3, type = "double"){
 	
@@ -157,7 +156,7 @@ benchmark_gemm <- function(ORDER = NULL, N = 3, type = "double"){
 		benchmarks[[i]] <- mbm
 	}
 	
-	df <- bind_rows(lapply(seq_along(benchmarks), function(i) { 
+	df <- do.call(rbind, lapply(seq_along(benchmarks), function(i) { 
 		benches <- summary(benchmarks[[i]])[,1:8]
 		benches$expr <- as.character(benches$expr)
 		cbind.data.frame(ORDER = as.character(rep(names(benchmarks)[i], 3)), benches, stringsAsFactors = FALSE) 
